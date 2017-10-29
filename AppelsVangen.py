@@ -99,10 +99,10 @@ textlevens2 = fontObj1.render('Levens O: %s' % levens2, True, BLACK)
 textscore2 = fontObj1.render('Score O: %s' % score2, True, BLACK)
 textpauze = fontObj2.render('PAUZE', True, BLACK)
 texthome = fontObj2.render('AppelSpel', True, BLACK)
-textplayermodem = fontObj2.render('Multiplayer', True, BLACK)
-textplayermodes = fontObj2.render('Singleplayer', True, BLACK)
+textplayermodem = fontObj3.render('Multiplayer', True, BLACK)
+textplayermodes = fontObj3.render('Singleplayer', True, BLACK)
 textplay = fontObj5.render('Om te spelen druk op spatiebalk', True, BLACK)
-textswitchmultisingleplayer = fontObj5.render('Druk op shift-P om te switchen tussen single- en multiplayer', True,
+textswitchmultisingleplayer = fontObj5.render('Druk op P om te switchen tussen single- en multiplayer', True,
                                               BLACK)
 
 textBwin = fontObj2.render('Speler B heeft gewonnen!', True, NAVYBLUE)
@@ -191,7 +191,6 @@ while True:
             # Kijken of de ESC wordt ingedrukt zo ja -> pauze
             if event.type == KEYUP and event.key == K_ESCAPE:
                 pauze = True
-
         # Appel verplaatsen
         ellipse1y += valsnelheid
 
@@ -472,15 +471,15 @@ while True:
         DISPLAYSURF.blit(textplay, (((lengthscreen / 2) - (fontObj5.size('Om te spelen druk op spatiebalk')[0] / 2)),
                                     heightscreen - (heightscreen / 6) * 4))
         DISPLAYSURF.blit(textswitchmultisingleplayer, (
-        ((lengthscreen / 2) - (fontObj5.size('Druk op shift-P om te switchen tussen single- en multiplayer')[0] / 2)),
+        ((lengthscreen / 2) - (fontObj5.size('Druk op P om te switchen tussen single- en multiplayer')[0] / 2)),
         heightscreen - (heightscreen / 6) * 3))
 
         if multiplayer:
             DISPLAYSURF.blit(textplayermodem, (
-                ((lengthscreen / 2) - (fontObj2.size('Multiplayer')[0] / 2)), heightscreen - (heightscreen / 6) * 2))
+                ((lengthscreen / 2) - (fontObj3.size('Multiplayer')[0] / 2)), heightscreen - (heightscreen / 6) * 2))
         else:
             DISPLAYSURF.blit(textplayermodes, (
-                ((lengthscreen / 2) - (fontObj2.size('Singleplayer')[0] / 2)), heightscreen - (heightscreen / 6) * 2))
+                ((lengthscreen / 2) - (fontObj3.size('Singleplayer')[0] / 2)), heightscreen - (heightscreen / 6) * 2))
     # Scherm updaten
     pygame.display.update()
     fpsClock.tick(FPS)
