@@ -112,7 +112,8 @@ textgameover = fontObj2.render('GAME OVER!', True, BLACK)
 
 textterugnaarspel = fontObj4.render('Druk op ESC om terug naar het spel te gaan', True, BLACK)
 textterugnaarhomescherm = fontObj4.render('Druk op H om naar het homescherm te gaan', True, BLACK)
-textopnieuw = fontObj4.render('Klik op een willekeurige toets om opnieuw te beginnen', True, BLACK)
+textopnieuw = fontObj4.render('Klik op R om opnieuw te beginnen', True, BLACK)
+textafsluiten = fontObj4.render('Klik op BACKSPACE om af te sluiten', True, BLACK)
 
 # !!!Hier altijd alle vormen tekenen, ook al komt het later pas in het spel!!!
 pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, 50))
@@ -166,10 +167,11 @@ def appelzijkant(vormx):
 while True:
     # Scherm wit maken
     DISPLAYSURF.fill(WHITE)
+    #Multiplayer
     if not pauze and not gameoverm and not gameovers and not menu and multiplayer:
         for event in pygame.event.get():
             # Controleren of moet worden afgesloten
-            if event.type == QUIT or event.type == KEYUP and event.key == K_BACKSPACE:
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             # Kijken of toets wordt ingedrukt en vierkant bewegen
@@ -187,6 +189,9 @@ while True:
                     levens2 = 10000
                 elif event.key == K_p:
                     variabelen()
+                elif event.key == K_g:
+                    levens1 = 1
+                    levens2 = 1
 
             # Kijken of de ESC wordt ingedrukt zo ja -> pauze
             if event.type == KEYUP and event.key == K_ESCAPE:
@@ -267,7 +272,7 @@ while True:
     elif not pauze and not gameoverm and not gameovers and not menu:
         for event in pygame.event.get():
             # Controleren of moet worden afgesloten
-            if event.type == QUIT or event.type == KEYUP and event.key == K_BACKSPACE:
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             # Kijken of toets wordt ingedrukt en vierkant bewegen
@@ -285,6 +290,8 @@ while True:
                 elif event.key == K_c:
                     levens1 = 10000
                     levens2 = 10000
+                elif event.key == K_g:
+                    levens1 = 1
             # Kijken of de ESC wordt ingedrukt zo ja -> pauze
             if event.type == KEYUP and event.key == K_ESCAPE:
                 pauze = True
@@ -336,7 +343,9 @@ while True:
                 elif event.key == K_h:
                     menu = True
                     pauze = False
-                    pass
+                elif event.key == K_r:
+                    variabelen()
+                    menu = False
 
         if multiplayer:
             # Teksten tekenen
@@ -353,6 +362,12 @@ while True:
             DISPLAYSURF.blit(textterugnaarhomescherm, (
             ((lengthscreen / 2) - (fontObj4.size('Druk op H om naar het homescherm te gaan')[0] / 2)),
             heightscreen - (heightscreen / 6) * 3))
+            DISPLAYSURF.blit(textopnieuw, (
+                ((lengthscreen / 2) - (fontObj4.size('Druk op R om opnieuw te beginnen')[0] / 2)),
+                heightscreen - (heightscreen / 6) * 2))
+            DISPLAYSURF.blit(textafsluiten, (
+                ((lengthscreen / 2) - (fontObj4.size('Druk op BACKSPACE om af te sluiten')[0] / 2)),
+                heightscreen - (heightscreen / 6) * 1))
             DISPLAYSURF.blit(textscore1, (5, 5))
             DISPLAYSURF.blit(textlevens1, (315, 5))
             DISPLAYSURF.blit(textscore2, (5, 20))
@@ -371,11 +386,17 @@ while True:
         DISPLAYSURF.blit(textterugnaarhomescherm, (
         ((lengthscreen / 2) - (fontObj4.size('Druk op H om naar het homescherm te gaan')[0] / 2)),
         heightscreen - (heightscreen / 6) * 3))
+        DISPLAYSURF.blit(textopnieuw, (
+            ((lengthscreen / 2) - (fontObj4.size('Druk op R om opnieuw te beginnen')[0] / 2)),
+            heightscreen - (heightscreen / 6) * 2))
+        DISPLAYSURF.blit(textafsluiten, (
+            ((lengthscreen / 2) - (fontObj4.size('Druk op BACKSPACE om af te sluiten')[0] / 2)),
+            heightscreen - (heightscreen / 6) * 1))
         DISPLAYSURF.blit(textscore1, (5, 5))
         DISPLAYSURF.blit(textlevens1, (315, 5))
 
     # gameover multiplayer scherm
-    elif not menu:
+    elif not menu and gameoverm:
         for event in pygame.event.get():
             # Controleren of moet worden afgesloten
             if event.type == QUIT:
@@ -385,7 +406,10 @@ while True:
                 if event.key == K_BACKSPACE:
                     pygame.quit()
                     sys.exit()
-                else:
+                elif event.key == K_r:
+                    variabelen()
+                    menu = False
+                elif event.key == K_h:
                     variabelen()
 
         if levens1 == 0 and levens2 == 0:
@@ -416,15 +440,18 @@ while True:
         DISPLAYSURF.blit(textgameover, (
         ((lengthscreen / 2) - (fontObj2.size('GAME OVER!')[0] / 2)), heightscreen - (heightscreen / 6) * 4.5))
         DISPLAYSURF.blit(textopnieuw, (
-        ((lengthscreen / 2) - (fontObj4.size('Klik op een willekeurige toets om opnieuw te beginnen')[0] / 2)),
+        ((lengthscreen / 2) - (fontObj4.size('Klik op R om opnieuw te beginnen')[0] / 2)),
         heightscreen - (heightscreen / 6) * 2.5))
+        DISPLAYSURF.blit(textterugnaarhomescherm, (
+            ((lengthscreen / 2) - (fontObj4.size('Druk op H om naar het homescherm te gaan')[0] / 2)),
+            heightscreen - (heightscreen / 6) * 1.5))
 
         DISPLAYSURF.blit(textscore1, (5, 5))
         DISPLAYSURF.blit(textlevens1, (315, 5))
         DISPLAYSURF.blit(textscore2, (5, 20))
         DISPLAYSURF.blit(textlevens2, (315, 20))
     # Gameover singleplayer
-    elif not menu:
+    elif not menu and gameovers:
         for event in pygame.event.get():
             # Controleren of moet worden afgesloten
             if event.type == QUIT:
@@ -434,7 +461,10 @@ while True:
                 if event.key == K_BACKSPACE:
                     pygame.quit()
                     sys.exit()
-                else:
+                elif event.key == K_r:
+                    variabelen()
+                    menu = False
+                elif event.key == K_h:
                     variabelen()
 
         textlevens1 = fontObj1.render('Levens: %s' % levens1, True, BLACK)
@@ -445,8 +475,11 @@ while True:
         DISPLAYSURF.blit(textgameover, (
         ((lengthscreen / 2) - (fontObj2.size('GAME OVER!')[0] / 2)), heightscreen - (heightscreen / 6) * 4.5))
         DISPLAYSURF.blit(textopnieuw, (
-        ((lengthscreen / 2) - (fontObj4.size('Klik op een willekeurige toets om opnieuw te beginnen')[0] / 2)),
+        ((lengthscreen / 2) - (fontObj4.size('Klik op R om opnieuw te beginnen')[0] / 2)),
         heightscreen - (heightscreen / 6) * 2.5))
+        DISPLAYSURF.blit(textterugnaarhomescherm, (
+            ((lengthscreen / 2) - (fontObj4.size('Druk op H om naar het homescherm te gaan')[0] / 2)),
+            heightscreen - (heightscreen / 6) * 1.5))
     # Startscherm
     else:
         for event in pygame.event.get():
