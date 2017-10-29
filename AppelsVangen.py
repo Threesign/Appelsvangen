@@ -99,6 +99,8 @@ textlevens2 = fontObj1.render('Levens O: %s' % levens2, True, BLACK)
 textscore2 = fontObj1.render('Score O: %s' % score2, True, BLACK)
 textpauze = fontObj2.render('PAUZE', True, BLACK)
 texthome = fontObj2.render('AppelSpel', True, BLACK)
+textplayermodem = fontObj2.render('Multiplayer', True, BLACK)
+textplayermodes = fontObj2.render('Singleplayer', True, BLACK)
 textplay = fontObj5.render('Om te spelen druk op spatiebalk', True, BLACK)
 textswitchmultisingleplayer = fontObj5.render('Druk op shift-P om te switchen tussen single- en multiplayer', True,
                                               BLACK)
@@ -166,9 +168,8 @@ while True:
     DISPLAYSURF.fill(WHITE)
     if not pauze and not gameoverm and not gameovers and not menu and multiplayer:
         for event in pygame.event.get():
-            all_keys = pygame.key.get_pressed()
             # Controleren of moet worden afgesloten
-            if event.type == QUIT or event.type == KEYUP and event.key == K_RETURN:
+            if event.type == QUIT or event.type == KEYUP and event.key == K_BACKSPACE:
                 pygame.quit()
                 sys.exit()
             # Kijken of toets wordt ingedrukt en vierkant bewegen
@@ -181,10 +182,10 @@ while True:
                     rect2x += 20
                 elif event.key == K_a:
                     rect2x -= 20
-                elif all_keys[pygame.K_c] and (all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]):
+                elif event.key == K_c:
                     levens1 = 10000
                     levens2 = 10000
-                elif all_keys[pygame.K_p] and (all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]):
+                elif event.key == K_p:
                     variabelen()
 
             # Kijken of de ESC wordt ingedrukt zo ja -> pauze
@@ -266,9 +267,8 @@ while True:
     # Singleplayer
     elif not pauze and not gameoverm and not gameovers and not menu:
         for event in pygame.event.get():
-            all_keys = pygame.key.get_pressed()
             # Controleren of moet worden afgesloten
-            if event.type == QUIT or event.type == KEYUP and event.key == K_RETURN:
+            if event.type == QUIT or event.type == KEYUP and event.key == K_BACKSPACE:
                 pygame.quit()
                 sys.exit()
             # Kijken of toets wordt ingedrukt en vierkant bewegen
@@ -279,11 +279,11 @@ while True:
                     rect1x -= 20
                 elif event.key == K_c:
                     levens = 1000
-                elif all_keys[pygame.K_p] and (all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]):
+                elif event.key == K_p:
                     variabelen()
                     multiplayer = True
 
-                elif all_keys[pygame.K_c] and (all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]):
+                elif event.key == K_c:
                     levens1 = 10000
                     levens2 = 10000
             # Kijken of de ESC wordt ingedrukt zo ja -> pauze
@@ -327,7 +327,7 @@ while True:
         for event in pygame.event.get():
             all_keys = pygame.key.get_pressed()
             # Controleren of moet worden afgesloten
-            if event.type == QUIT or event.type == KEYUP and event.key == K_RETURN:
+            if event.type == QUIT or event.type == KEYUP and event.key == K_BACKSPACE:
                 pygame.quit()
                 sys.exit()
             # Kijken of de ESC wordt ingedrukt zo ja -> start
@@ -383,7 +383,7 @@ while True:
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYUP:
-                if event.key == K_RETURN:
+                if event.key == K_BACKSPACE:
                     pygame.quit()
                     sys.exit()
                 else:
@@ -432,7 +432,7 @@ while True:
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYUP:
-                if event.key == K_RETURN:
+                if event.key == K_BACKSPACE:
                     pygame.quit()
                     sys.exit()
                 else:
@@ -451,7 +451,6 @@ while True:
     # Startscherm
     else:
         for event in pygame.event.get():
-            all_keys = pygame.key.get_pressed()
             # Controleren of moet worden afgesloten
             if event.type == QUIT:
                 pygame.quit()
@@ -462,9 +461,11 @@ while True:
                     sys.exit()
                 elif event.key == K_SPACE:
                     menu = False
-                elif all_keys[pygame.K_p] and (all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]):
-                    variabelen()
-                    multiplayer = True
+                elif event.key == K_p:
+                    if multiplayer:
+                        multiplayer = False
+                    elif not multiplayer:
+                        multiplayer = True
 
         DISPLAYSURF.blit(texthome, (
             ((lengthscreen / 2) - (fontObj2.size('AppelSpel')[0] / 2)), heightscreen - (heightscreen / 6) * 5))
@@ -474,6 +475,12 @@ while True:
         ((lengthscreen / 2) - (fontObj5.size('Druk op shift-P om te switchen tussen single- en multiplayer')[0] / 2)),
         heightscreen - (heightscreen / 6) * 3))
 
+        if multiplayer:
+            DISPLAYSURF.blit(textplayermodem, (
+                ((lengthscreen / 2) - (fontObj2.size('Multiplayer')[0] / 2)), heightscreen - (heightscreen / 6) * 2))
+        else:
+            DISPLAYSURF.blit(textplayermodes, (
+                ((lengthscreen / 2) - (fontObj2.size('Singleplayer')[0] / 2)), heightscreen - (heightscreen / 6) * 2))
     # Scherm updaten
     pygame.display.update()
     fpsClock.tick(FPS)
