@@ -2,6 +2,12 @@
 import pygame, sys
 from pygame.locals import *
 from random import randint
+from win32api import GetSystemMetrics
+
+fullscreen = False
+
+width = GetSystemMetrics(0)
+height = GetSystemMetrics(1)
 
 pygame.init()
 
@@ -9,10 +15,14 @@ FPS = 60
 fpsClock = pygame.time.Clock()
 
 # Lengte en hoogte definieren
-lengthscreen, heightscreen = 400, 400
+if fullscreen:
+    lengthscreen, heightscreen = pygame.display.Info().current_w, pygame.display.Info().current_h
+    DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+else:
+    lengthscreen, heightscreen = 400, 400
+    DISPLAYSURF = pygame.display.set_mode((lengthscreen, heightscreen), 0, 32)
 
 # Scherm maken
-DISPLAYSURF = pygame.display.set_mode((lengthscreen, heightscreen), 0, 32)
 pygame.display.set_caption('Appels vangen')
 
 # Kleuren definiëren
@@ -36,7 +46,7 @@ rect1y = 325
 rect2x = 100
 rect2y = 325
 
-ellipse1x = randint(0, 400)
+ellipse1x = randint(0, lengthscreen)
 ellipse1y = 0
 
 score1 = 0
@@ -58,13 +68,13 @@ appelgeraakt2 = False
 
 def variabelen():
     global rect1x, rect1y, rect2x, rect2y, rect1x, ellipse1x, ellipse1y, score1, score2, levens1, levens2, pauze, gameoverm, gameovers, multiplayer, menu, valsnelheid, appelgeraakt1, appelgeraakt2
-    rect1x = 300
-    rect1y = 325
+    rect1x = lengthscreen / 2
+    rect1y = heightscreen - 40
 
-    rect2x = 100
-    rect2y = 325
+    rect2x = lengthscreen / 2
+    rect2y = heightscreen - 40
 
-    ellipse1x = randint(0, 400)
+    ellipse1x = randint(0, lengthscreen)
     ellipse1y = 0
 
     score1 = 0
@@ -116,8 +126,8 @@ textopnieuw = fontObj4.render('Klik op R om opnieuw te beginnen', True, BLACK)
 textafsluiten = fontObj4.render('Klik op BACKSPACE om af te sluiten', True, BLACK)
 
 # !!!Hier altijd alle vormen tekenen, ook al komt het later pas in het spel!!!
-pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, 50))
-pygame.draw.rect(DISPLAYSURF, ORANGE, (rect2x, rect2y, 50, 50))
+pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, heightscreen + 50))
+pygame.draw.rect(DISPLAYSURF, ORANGE, (rect2x, rect2y, 50, heightscreen + 50))
 pygame.draw.ellipse(DISPLAYSURF, RED, (ellipse1x, ellipse1y, 50, 50))
 
 
@@ -136,18 +146,18 @@ def vormenraken(vorm1x, vorm2x, vorm1y, vorm2y, width, height, vorm):
 
 
 def vormrand(vormx):
-    if vormx >= 400:
+    if vormx >= lengthscreen:
         vormx = 0
     elif vormx <= 0:
-        vormx = 400
+        vormx = lengthscreen
     return vormx
 
 
 def appelgrond(vormy, vormx):
     global levens1, levens2
-    if vormy >= 400:
+    if vormy >= heightscreen:
         vormy = 0
-        vormx = randint(0, 400)
+        vormx = randint(0, heightscreen)
         levens1 -= 1
         levens2 -= 1
         return vormy, vormx
@@ -157,9 +167,9 @@ def appelgrond(vormy, vormx):
 
 def appelzijkant(vormx):
     if vormx < 25:
-        vormx = randint(0, 400)
-    if vormx > 375:
-        vormx = randint(0, 400)
+        vormx = randint(0, lengthscreen)
+    if vormx > lengthscreen-25:
+        vormx = randint(0, lengthscreen)
     return vormx
 
 
@@ -200,8 +210,8 @@ while True:
         ellipse1y += valsnelheid
 
         # kijken of het vierkant in de zijkant zit
-        rect1x = vormrand(rect1x)
-        rect2x = vormrand(rect2x)
+        rect1x = vormrand(lengthscreen/2)
+        rect2x = vormrand(lengthscreen/2)
 
         # Controleren of appel grond raakt
         ellipse1y, ellipse1x = appelgrond(ellipse1y, ellipse1x)
@@ -225,7 +235,7 @@ while True:
 
         if appelgeraakt1 or appelgeraakt2:
             ellipse1y = 0
-            ellipse1x = randint(0, 400)
+            ellipse1x = randint(0, lengthscreen)
 
         appelgeraakt1 = False
         appelgeraakt2 = False
@@ -260,13 +270,13 @@ while True:
         textscore2 = fontObj1.render('Score O: %s' % score2, True, BLACK)
 
         pygame.draw.ellipse(DISPLAYSURF, RED, (ellipse1x, ellipse1y, 50, 50))
-        pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, 50))
-        pygame.draw.rect(DISPLAYSURF, ORANGE, (rect2x, rect2y, 50, 50))
+        pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, heightscreen + 50))
+        pygame.draw.rect(DISPLAYSURF, ORANGE, (rect2x, rect2y, 50, heightscreen + 50))
 
         DISPLAYSURF.blit(textscore1, (5, 5))
-        DISPLAYSURF.blit(textlevens1, (315, 5))
+        DISPLAYSURF.blit(textlevens1, (lengthscreen - 85, 5))
         DISPLAYSURF.blit(textscore2, (5, 20))
-        DISPLAYSURF.blit(textlevens2, (315, 20))
+        DISPLAYSURF.blit(textlevens2, (lengthscreen - 85, 20))
 
     # Singleplayer
     elif not pauze and not gameoverm and not gameovers and not menu:
@@ -308,7 +318,7 @@ while True:
         # Controleren of appel vierkant raakt
         if vormenraken(rect1x, ellipse1x, rect1y, ellipse1y, 50, 50, "circle"):
             ellipse1y = 0
-            ellipse1x = randint(0, 400)
+            ellipse1x = randint(0, lengthscreen)
             score1 += 1
             if score1 == 10 or score1 == 20 or score1 == 30 or score1 == 40 or score1 == 50 or score1 == 60:
                 valsnelheid += 1
@@ -325,9 +335,9 @@ while True:
         textlevens1 = fontObj1.render('Levens: %s' % levens1, True, BLACK)
         textscore1 = fontObj1.render('Score: %s' % score1, True, BLACK)
         pygame.draw.ellipse(DISPLAYSURF, RED, (ellipse1x, ellipse1y, 50, 50))
-        pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, 50))
+        pygame.draw.rect(DISPLAYSURF, NAVYBLUE, (rect1x, rect1y, 50, heightscreen + 50))
         DISPLAYSURF.blit(textscore1, (5, 5))
-        DISPLAYSURF.blit(textlevens1, (320, 5))
+        DISPLAYSURF.blit(textlevens1, (lengthscreen - 85, 5))
     # pauzescherm
     elif not gameoverm and not gameovers and not menu:
         for event in pygame.event.get():
@@ -369,9 +379,9 @@ while True:
                 ((lengthscreen / 2) - (fontObj4.size('Druk op BACKSPACE om af te sluiten')[0] / 2)),
                 heightscreen - (heightscreen / 6) * 1))
             DISPLAYSURF.blit(textscore1, (5, 5))
-            DISPLAYSURF.blit(textlevens1, (315, 5))
+            DISPLAYSURF.blit(textlevens1, (lengthscreen - 85, 5))
             DISPLAYSURF.blit(textscore2, (5, 20))
-            DISPLAYSURF.blit(textlevens2, (315, 20))
+            DISPLAYSURF.blit(textlevens2, (lengthscreen - 85, 20))
 
         else:
             # Teksten tekenen
@@ -393,7 +403,7 @@ while True:
             ((lengthscreen / 2) - (fontObj4.size('Druk op BACKSPACE om af te sluiten')[0] / 2)),
             heightscreen - (heightscreen / 6) * 1))
         DISPLAYSURF.blit(textscore1, (5, 5))
-        DISPLAYSURF.blit(textlevens1, (315, 5))
+        DISPLAYSURF.blit(textlevens1, (lengthscreen - 85, 5))
 
     # gameover multiplayer scherm
     elif not menu and gameoverm:
@@ -447,9 +457,9 @@ while True:
             heightscreen - (heightscreen / 6) * 1.5))
 
         DISPLAYSURF.blit(textscore1, (5, 5))
-        DISPLAYSURF.blit(textlevens1, (315, 5))
+        DISPLAYSURF.blit(textlevens1, (lengthscreen - 85, 5))
         DISPLAYSURF.blit(textscore2, (5, 20))
-        DISPLAYSURF.blit(textlevens2, (315, 20))
+        DISPLAYSURF.blit(textlevens2, (lengthscreen - 85, 20))
     # Gameover singleplayer
     elif not menu and gameovers:
         for event in pygame.event.get():
